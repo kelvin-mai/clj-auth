@@ -1,9 +1,13 @@
 (ns auth.core
   (:require [auth.routes :refer [ping-route
-                                 login-route
-                                 register-route]]
+                                 auth-routes]]
+            [muuntaja.core :as m]
             [org.httpkit.server :refer [run-server]]
+            [reitit.coercion.schema]
             [reitit.ring :as ring]
+            [reitit.ring.coercion :refer [coerce-exceptions-middleware
+                                          coerce-request-middleware
+                                          coerce-response-middleware]]
             [reitit.ring.middleware.exception :refer [exception-middleware]]
             [reitit.ring.middleware.muuntaja :refer [format-request-middleware
                                                      format-response-middleware
@@ -17,16 +21,20 @@
     (ring/router
       [["/api"
         ping-route
-        login-route
-        register-route]]
-      {:data {:middleware [format-negotiate-middleware
+        auth-routes]]
+      {:data {:coercion reitit.coercion.schema/coercion
+              :muuntaja m/instance
+              :middleware [format-negotiate-middleware
                            format-response-middleware
                            exception-middleware
-                           format-request-middleware]}})
+                           format-request-middleware
+                           coerce-exceptions-middleware
+                           coerce-request-middleware
+                           coerce-response-middleware]}})
     (ring/routes
       (ring/redirect-trailing-slash-handler)
       (ring/create-default-handler
-        {:not-found (constantly {:status 404 :body "Route not found"})}))))
+        {:not-found (constantly {:status 404 :body {:error "Route not found"}})}))))
 
 (defn stop-server []
   (when-not (nil? @server)
