@@ -26,13 +26,15 @@
 
 (defn create-user
   [{:keys [email username password]}]
-  (let [hashed-password (encrypt password)]
-    (->
-      (hh/insert-into :users)
-      (hh/columns :email :username :password)
-      (hh/values [[email username hashed-password]])
-      h/format
-      db-query-one)))
+  (let [hashed-password (encrypt password)
+        created-user (->
+                       (hh/insert-into :users)
+                       (hh/columns :email :username :password)
+                       (hh/values [[email username hashed-password]])
+                       h/format
+                       db-query-one)
+        sanitized-user (dissoc created-user :password)]
+    sanitized-user))
 
 (defn get-user
   [{:keys [username password]}]
@@ -44,12 +46,14 @@
         sanitized-user (dissoc user :password)]
     (if (and user (check password (:password user)))
       sanitized-user
-      {:error "Invalid credentials"})))
+      nil)))
 
 (defn get-all-users []
-  (->
-    (hh/select :*)
-    (hh/from :users)
-    h/format
-    db-query))
+  (let [users (->
+                (hh/select :*)
+                (hh/from :users)
+                h/format
+                db-query)
+        sanitized-user (map #(dissoc % :password) users)]
+    sanitized-user))
 

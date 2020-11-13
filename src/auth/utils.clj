@@ -5,8 +5,9 @@
 
 (def jwt-secret "JWT_SECRET")
 (def backend (backends/jws {:secret jwt-secret}))
-(def wrap-jwt-authentication
-  (wrap-authentication backend))
+(defn wrap-jwt-authentication
+  [handler]
+  (wrap-authentication handler backend))
 
 (defn create-token [payload]
   (jwt/sign payload jwt-secret))

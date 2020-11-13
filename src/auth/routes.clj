@@ -1,25 +1,19 @@
 (ns auth.routes
-  (:require [schema.core :as s]))
-
-(defn dummy-handler
-  [{:keys [parameters]}]
-  (let [data (:body parameters)]
-    {:status 200
-     :body {:body data}}))
+  (:require [auth.handlers :as handle]
+            [auth.utils :refer [wrap-jwt-authentication]]
+            [schema.core :as s]))
 
 (def ping-route
   ["/ping" {:name ::ping
-            :get (fn [_]
-                   {:status 200
-                    :body {:hello "world"
-                           :something-else "ok"}})}])
+            :get handle/ping}])
 
 (def auth-routes
-  [["/register" {:post {:parameters {:body {:username s/Str
+  [["/users" {:get {:handler handle/get-all-users}}]
+   ["/register" {:post {:parameters {:body {:username s/Str
                                             :password s/Str
                                             :email s/Str}}
-                        :handler dummy-handler}}]
+                        :handler handle/register}}]
    ["/login" {:post {:parameters {:body {:username s/Str
                                          :password s/Str}}
-                     :handler dummy-handler}}]])
+                     :handler handle/login}}]])
 
