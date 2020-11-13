@@ -7,16 +7,15 @@
    :body {:hello "world"
           :ping "pong"}})
 
-(defn get-all-users [{:keys [headers]}]
+(defn get-all-users []
   {:status 200
-   :body {:users (db/get-all-users)
-          :headers headers}})
+   :body {:users (db/get-all-users)}})
 
 (defn register
   [{:keys [parameters]}]
   (let [data (:body parameters)
         user (db/create-user data)]
-    {:status 200
+    {:status 201
      :body {:user user
             :token (create-token user)}}))
 

@@ -1,6 +1,6 @@
 (ns auth.routes
   (:require [auth.handlers :as handle]
-            [auth.utils :refer [wrap-jwt-authentication]]
+            [auth.utils :refer [wrap-jwt-authentication auth-middleware]]
             [schema.core :as s]))
 
 (def ping-route
@@ -8,7 +8,8 @@
             :get handle/ping}])
 
 (def auth-routes
-  [["/users" {:get {:handler handle/get-all-users}}]
+  [["/users" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                    :handler handle/get-all-users}}]
    ["/register" {:post {:parameters {:body {:username s/Str
                                             :password s/Str
                                             :email s/Str}}
