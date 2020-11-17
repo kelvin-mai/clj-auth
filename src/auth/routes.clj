@@ -10,6 +10,8 @@
 (def auth-routes
   [["/users" {:get {:middleware [wrap-jwt-authentication auth-middleware]
                     :handler handle/get-all-users}}]
+   ["/me" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                 :handler handle/me}}]
    ["/register" {:post {:parameters {:body {:username s/Str
                                             :password s/Str
                                             :email s/Str}}

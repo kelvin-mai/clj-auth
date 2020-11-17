@@ -21,6 +21,3 @@
 (defn create-token [payload]
   (jwt/sign payload jwt-secret))
 
-(defn decode-token [token]
-  (jwt/unsign token jwt-secret))
-

@@ -29,3 +29,14 @@
       {:status 200
        :body {:user user
               :token (create-token user)}})))
+
+(defn me
+  [request]
+  (let [payload (:identity request)
+        user (db/get-user payload)]
+    (if (nil? user)
+      {:status 404
+       :body {:error "Invalid credentials"}}
+      {:status 200
+       :body {:user user
+              :token (create-token user)}})))

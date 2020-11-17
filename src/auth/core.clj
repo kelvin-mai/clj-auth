@@ -45,8 +45,3 @@
   (println "Server started on localhost:8080")
   (reset! server (run-server app {:port 8080})))
 
-(comment
-  @server
-  (-main)
-  (stop-server)
-  ())
