@@ -36,7 +36,7 @@
         sanitized-user (dissoc created-user :password)]
     sanitized-user))
 
-(defn get-user
+(defn get-user-by-credentials
   [{:keys [username password]}]
   (let [user (-> (hh/select :*)
                  (hh/from :users)
@@ -45,6 +45,18 @@
                  db-query-one)
         sanitized-user (dissoc user :password)]
     (if (and user (check password (:password user)))
+      sanitized-user
+      nil)))
+
+(defn get-user-by-payload
+  [{:keys [username]}]
+  (let [user (-> (hh/select :*)
+                 (hh/from :users)
+                 (hh/where := :username username)
+                 h/format
+                 db-query-one)
+        sanitized-user (dissoc user :password)]
+    (if user
       sanitized-user
       nil)))
 

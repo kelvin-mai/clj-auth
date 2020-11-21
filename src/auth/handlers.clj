@@ -22,7 +22,7 @@
 (defn login
   [{:keys [parameters]}]
   (let [data (:body parameters)
-        user (db/get-user data)]
+        user (db/get-user-by-credentials data)]
     (if (nil? user)
       {:status 404
        :body {:error "Invalid credentials"}}
@@ -33,7 +33,7 @@
 (defn me
   [request]
   (let [payload (:identity request)
-        user (db/get-user payload)]
+        user (db/get-user-by-payload payload)]
     (if (nil? user)
       {:status 404
        :body {:error "Invalid credentials"}}
