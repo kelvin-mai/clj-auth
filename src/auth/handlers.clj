@@ -7,7 +7,7 @@
    :body {:hello "world"
           :ping "pong"}})
 
-(defn get-all-users []
+(defn get-all-users [_]
   {:status 200
    :body {:users (db/get-all-users)}})
 
